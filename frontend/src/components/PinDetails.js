@@ -38,8 +38,8 @@ const PinDetails = ({user}) => {
       setAddingComment(true)
 
       client.patch(pinId)
-      .setIfMissing({comments:[]})
-      .insert('after' , 'comments[-1]' ,[{
+      .setIfMissing({comment:[]})
+      .insert('after' , 'comment[-1]' ,[{
         comment,
         _key:uuidv4(),
         postedBy:{
@@ -147,7 +147,6 @@ const PinDetails = ({user}) => {
       <h2 className='text-center font-bold text-2xl mt-8 mb-4'>
       More like this
       </h2>
-      {console.log(pins)}
       <MasonryLayout pins={pins}/>
       </>
     ):(
