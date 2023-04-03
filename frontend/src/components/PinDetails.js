@@ -13,10 +13,9 @@ const PinDetails = ({user}) => {
   const [pinDetail , setPinDetail] = useState(null)
   const [comment , setComment] = useState('')
   const [addingComment , setAddingComment] = useState(false)
+// console.log(pinDetail)
   
   const { pinId } = useParams()
-
-
 
   const fetchPinDetails = () => {
     const query = pinDetailQuery(pinId)
@@ -34,20 +33,22 @@ const PinDetails = ({user}) => {
   }
 
   const addComment = ()=>{
-    if(comment){
+    if(comment && user){
       setAddingComment(true)
 
       client.patch(pinId)
       .setIfMissing({comment:[]})
       .insert('after' , 'comment[-1]' ,[{
         comment,
-        _key:uuidv4(),
+        userName:user.userName,
+        image:user.image,
         postedBy:{
           _type:'postedBy',
-          _ref:user._id
+          _ref:user._id,
         }
-      }] ).commit().then(()=>{
-        fetchPinDetails()
+      }] ).commit().then((result)=>{
+        console.log(result.comment)
+        setPinDetail((prev)=>({...prev , comment:result.comment}))
         setComment('')
         setAddingComment(false)
       })
@@ -101,15 +102,15 @@ const PinDetails = ({user}) => {
       </div>
         <h2 className='mt-5 text-2xl'>Comments</h2>
         <div className="max-h-[370px] overflow-y-auto">
-          {pinDetail?.comments?.map((comment,i) => (
+          {pinDetail.comment && pinDetail.comment.map((comment,i) => (
             <div className='flex gap-2 mt-5 items-center bg-white rounded-lg' key={i}>
                 <img 
-                src={comment.postedBy.image}
+              src={comment.postedBy.image || comment.image}
                 alt="user-profile"
                 className="w-10 h-10 rounded-full cursor-pointer"
                 />
                 <div className="flex flex-col">
-                  <p className="font-bold">{comment.postedBy.userName}</p>
+                  <p className="font-bold">{comment.postedBy.userName || comment.userName}</p>
                   <p>{comment.comment}</p>
                 </div>
             </div>
@@ -117,14 +118,14 @@ const PinDetails = ({user}) => {
         </div>
 
             <div className='flex flex-wrap mt-6 gap-3'>
-            <div to={`user-profile/${pinDetail.postedBy._id}`} className="flex gap-2 mt-5 items-center bg-white rounded-lg">
-          <img
+        {pinDetail.postedBy && <div to={`user-profile/${pinDetail.postedBy._id}`} className="flex gap-2 mt-5 items-center bg-white rounded-lg">
+      {user && <img
           className='w-8 h-8 rounded-full object-cover'
-          src={pinDetail.postedBy?.image}
+          src={user.image}
           alt="user-profile"
-          />
+          />}
          
-           </div>
+           </div>}
            <input
            className='flex-1 border-gray-100 outline-none border-2 p-2 rounded-2xl focus:border-gray-300'
            type="text"

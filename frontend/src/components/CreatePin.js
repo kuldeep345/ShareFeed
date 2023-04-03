@@ -1,13 +1,14 @@
-import React , { useState } from 'react'
+import React , { useContext, useState } from 'react'
 import { AiOutlineCloudUpload } from 'react-icons/ai'
 import { MdDelete } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import { client } from '../client'
 import Spinner from './Spinner'
 import { categories } from '../utils/data'
+import { UserContext } from '../context/PinContext'
 
 const CreatePin = ({user}) => {
-
+  const { fetch ,setFetch } = useContext(UserContext)
   const [ title, setTitle] = useState('')
   const [about, setAbout] = useState('')
   const [destination , setDestination] = useState('')
@@ -61,6 +62,7 @@ const CreatePin = ({user}) => {
       }
 
       client.create(doc).then(()=>{
+        setFetch(!fetch)
         navigate('/')
       })
 

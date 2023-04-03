@@ -1,16 +1,24 @@
-import React , { useEffect , useState } from 'react'
+import React , { useContext, useEffect , useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { client } from '../client' 
 import MasonryLayout from './MasonryLayout'
 import Spinner from './Spinner'
 import { searchQuery ,feedQuery } from '../utils/data'
+import { UserContext } from '../context/PinContext'
 
 const Feed = () => {
-
+  const { fetch , setFetch } = useContext(UserContext)
   const [ loading , setLoading] = useState(false)
   const [ pins , setPins] = useState(null)
 
   const { categoryId } = useParams()
+
+  useEffect(() => {
+    setTimeout(() => {
+      setFetch(!fetch)
+    }, 2000);
+  }, [])
+  
 
   useEffect(() => {
    setLoading(true)
@@ -28,7 +36,7 @@ const Feed = () => {
     })
    }
 
-  }, [categoryId])
+  }, [categoryId , fetch])
   
 
   if(loading) return <Spinner message="We are adding new ideas to your feed"/>

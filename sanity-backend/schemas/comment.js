@@ -4,6 +4,16 @@ export default {
     type:'document',
     fields:[
         {
+            name:'image',
+            title:'Image',
+            type:'string'
+        },
+        {
+            name:'userName',
+            title:'userName',
+            type:'string'
+        },
+        {
             name:'postedBy',
             title:'PostedBy',
             type:'postedBy'

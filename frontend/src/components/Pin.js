@@ -9,15 +9,15 @@ import { parseCookies } from 'nookies'
 import {client , urlFor } from '../client'
 import { saveQuery } from '../utils/data'
 
-const Pin = ({pin:{postedBy , image, _id , destination}}) => {
-
+const Pin = ({pin}) => {
+  const {postedBy , image, _id , destination} = pin
   const [postHovered, setPostHovered] = useState(false)
   const [save, setSave] = useState(null)
   const navigate = useNavigate()
 
     const {email , id ,name ,picture } = parseCookies()
     const alreadySaved = !!(save?.filter(item => item.postedBy?._id === id))?.length 
-
+  console.log(postedBy)
     const savePin = (_id)=>{
       if(!alreadySaved){
         client.patch(_id).setIfMissing({save:[]})
@@ -52,7 +52,8 @@ const Pin = ({pin:{postedBy , image, _id , destination}}) => {
     }
 
      return (
-    <div className='m-2'>
+      <>
+   {Pin && <div className='m-2'>
       <div
       onMouseEnter={()=>setPostHovered(true)}
       onMouseLeave={()=>setPostHovered(false)}
@@ -120,7 +121,7 @@ const Pin = ({pin:{postedBy , image, _id , destination}}) => {
       )}
       </div>
 
-      <Link to={`user-profile/${postedBy._id}`} className="flex gap-2 mt-2 items-center">
+     {postedBy && <Link to={`user-profile/${postedBy._id}`} className="flex gap-2 mt-2 items-center">
           <img
           className='w-8 h-8 rounded-full object-cover'
           src={postedBy.image}
@@ -128,8 +129,9 @@ const Pin = ({pin:{postedBy , image, _id , destination}}) => {
           />
           <p className="font-semibold capitalize">{postedBy?.userName}</p>
       </Link>
-
-    </div>
+}
+    </div>}
+    </>
   )
 }
 
